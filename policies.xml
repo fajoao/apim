@@ -1,0 +1,34 @@
+<policies>
+    <inbound>
+        <choose>
+            <when condition="@(context.Request.Headers.GetValueOrDefault("site_id", "") == "MLA")">
+                <set-backend-service base-url="https://apimla.azurewebsites.net/celulares" />
+            </when>
+            <when condition="@(context.Request.Headers.GetValueOrDefault("site_id", "") == "MLB")">
+                <set-backend-service base-url="https://apimlb.azurewebsites.net/celulares" />
+            </when>
+            <when condition="@(context.Request.Headers.GetValueOrDefault("site_id", "") == "MLC")">
+                <set-backend-service base-url="https://apimlc.azurewebsites.net/celulares" />
+            </when>
+            <when condition="@(context.Request.Headers.GetValueOrDefault("site_id", "") == "MLM")">
+                <set-backend-service base-url="https://apimlm.azurewebsites.net/celulares" />
+            </when>
+            <otherwise>
+                <return-response>
+                    <set-status code="400" reason="Invalid site_id header value ARGENTINA" />
+                </return-response>
+            </otherwise>
+        </choose>
+        <rate-limit-by-key calls="1000" renewal-period="60" 
+            counter-key="@(context.Request.IpAddress)" />
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
